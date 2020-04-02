@@ -10,6 +10,8 @@ import (
 
 const delay = 3 // reconnect after delay seconds
 
+var QosSettings qos
+
 // Connection amqp.Connection wrapper
 type Connection struct {
 	*amqp.Connection
@@ -43,8 +45,22 @@ func (c *Connection) Channel() (*Channel, error) {
 				time.Sleep(delay * time.Second)
 
 				ch, err := c.Connection.Channel()
+
 				if err == nil {
 					debug("channel recreate success")
+
+					if QosSettings != (qos{}) {
+						err = channel.Qos(
+							QosSettings.prefetchCount,
+							QosSettings.prefetchSize,
+							QosSettings.global,
+						)
+						if err != nil {
+							debug("Could not set QOS parameters")
+							continue
+						}
+					}
+
 					channel.Channel = ch
 					break
 				}
@@ -158,6 +174,12 @@ func next(s []string, lastSeq int) int {
 type Channel struct {
 	*amqp.Channel
 	closed int32
+}
+
+type qos struct {
+	prefetchCount uint16
+	prefetchSize  uint32
+	global        bool
 }
 
 // IsClosed indicate closed by developer
