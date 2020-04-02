@@ -177,8 +177,8 @@ type Channel struct {
 }
 
 type qos struct {
-	prefetchCount uint16
-	prefetchSize  uint32
+	prefetchCount int
+	prefetchSize  int
 	global        bool
 }
 
