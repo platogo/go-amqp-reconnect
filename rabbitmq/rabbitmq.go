@@ -10,7 +10,7 @@ import (
 
 const delay = 3 // reconnect after delay seconds
 
-var QosSettings qos
+var QosSettings Qos
 
 // Connection amqp.Connection wrapper
 type Connection struct {
@@ -49,7 +49,7 @@ func (c *Connection) Channel() (*Channel, error) {
 				if err == nil {
 					debug("channel recreate success")
 
-					if QosSettings != (qos{}) {
+					if QosSettings != (Qos{}) {
 						err = channel.Qos(
 							QosSettings.prefetchCount,
 							QosSettings.prefetchSize,
