@@ -176,7 +176,7 @@ type Channel struct {
 	closed int32
 }
 
-type qos struct {
+type Qos struct {
 	prefetchCount int
 	prefetchSize  int
 	global        bool
