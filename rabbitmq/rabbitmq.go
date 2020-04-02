@@ -51,9 +51,9 @@ func (c *Connection) Channel() (*Channel, error) {
 
 					if QosSettings != (Qos{}) {
 						err = channel.Qos(
-							QosSettings.prefetchCount,
-							QosSettings.prefetchSize,
-							QosSettings.global,
+							QosSettings.PrefetchCount,
+							QosSettings.PrefetchSize,
+							QosSettings.Global,
 						)
 						if err != nil {
 							debug("Could not set QOS parameters")
@@ -177,9 +177,9 @@ type Channel struct {
 }
 
 type Qos struct {
-	prefetchCount int
-	prefetchSize  int
-	global        bool
+	PrefetchCount int
+	PrefetchSize  int
+	Global        bool
 }
 
 // IsClosed indicate closed by developer
