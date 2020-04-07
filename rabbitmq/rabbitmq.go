@@ -24,6 +24,18 @@ func (c *Connection) Channel() (*Channel, error) {
 		return nil, err
 	}
 
+	if QosSettings != (Qos{}) {
+		err = ch.Qos(
+			QosSettings.PrefetchCount,
+			QosSettings.PrefetchSize,
+			QosSettings.Global,
+		)
+		if err != nil {
+			debug("Could not set QOS parameters")
+			return nil, err
+		}
+	}
+
 	channel := &Channel{
 		Channel: ch,
 	}
@@ -50,7 +62,7 @@ func (c *Connection) Channel() (*Channel, error) {
 					debug("channel recreate success")
 
 					if QosSettings != (Qos{}) {
-						err = channel.Qos(
+						err = ch.Qos(
 							QosSettings.PrefetchCount,
 							QosSettings.PrefetchSize,
 							QosSettings.Global,
@@ -196,6 +208,16 @@ func (ch *Channel) Close() error {
 	atomic.StoreInt32(&ch.closed, 1)
 
 	return ch.Channel.Close()
+}
+
+func (ch *Channel) Cancel(consumer string, noWait bool) error {
+	if ch.IsClosed() {
+		return amqp.ErrClosed
+	}
+
+	atomic.StoreInt32(&ch.closed, 1)
+
+	return ch.Channel.Cancel(consumer, noWait)
 }
 
 // Consume warp amqp.Channel.Consume, the returned delivery will end only when channel closed by developer
